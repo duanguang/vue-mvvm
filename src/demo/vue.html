@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script>
+    var data={name:'kindeng',aa:{bb:'bb'}};
+    observe(data);
+    data.name = 'dmq';
+    data.aa.bb='aa';
+    function observe(data) {
+        if(!data||typeof data!=='object'){
+            return;
+        }
+        Object.keys(data).forEach(function (key) {
+            defineReactive(data, key, data[key]);
+        })
+    }
+
+    function defineReactive(data, key, val) {
+        var dep = new Dep();
+        observe(val); // 监听子属性
+        Object.defineProperty(data, key, {
+            enumerable: true, // 可枚举
+            configurable: false, // 不能再define
+            get: function() {
+                return val;
+            },
+            set: function(newVal) {
+                console.log('哈哈哈，监听到值变化了 ', val, ' --> ', newVal);
+                val = newVal;
+            }
+        });
+    }
+    function Dep() {
+        this.subs = [];
+    }
+    Dep.prototype={
+        addSub:function (sub) {
+            this.subs.push(sub);
+        },
+        notify:function () {
+            this.subs.forEach(function (sub) {
+                sub.update();
+            })
+        }
+    }
+</script>
+</body>
+</html>
